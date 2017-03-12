@@ -11,6 +11,7 @@
         $$("chart").load(rest);
     };
 
+    //create UI
     webix.ui({
         id: "app",
         container: "app",
@@ -22,7 +23,10 @@
             },
             {
                 id: "currentValue",
-                template: "Current <b>#value#</b>",
+                template: function(response){
+                    var current = response.value ? response.value.toFixed(3) : NaN;
+                    return "Current <b>" + current +"</b>";
+                },
                 height: 30
             },
             {
@@ -35,12 +39,7 @@
                 animateDuration: 300,
                 xAxis: {
                     template: function (response) {
-                        return webix.Number.format(response.value, {
-                            groupDelimiter: "",
-                            groupSize: 0,
-                            decimalDelimiter: ".",
-                            decimalSize: 3
-                        });
+                        return webix.Date.dateToStr("%H:%i:%s")(new Date(response.timestamp));
                     }
                 },
                 yAxis: {
@@ -77,10 +76,11 @@
 
     webix.extend($$("app"), webix.ProgressBar);
     $$("app").showProgress({
-        type:"icon",
-        delay:1000,
+        type: "icon",
+        delay: 1000,
         hide: true
     });
 
     setInterval(mainLoop, 1000);
-})();
+})
+();
