@@ -1,5 +1,5 @@
 (function () {
-    var rest = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc3/hosts/acudebian7.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
+    var rest = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
 
     webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
         headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
