@@ -1,14 +1,16 @@
 (function () {
-    var rest = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
+    var beam_current = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
+    var operator_msg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Operator_message/value");
 
     webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
         headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
     });
 
     var mainLoop = function () {
-        $$("currentValue").load(rest);
-        $$("lastUpdated").load(rest);
-        $$("chart").load(rest);
+        $$("operator_msg").load(operator_msg);
+        $$("currentValue").load(beam_current);
+        $$("lastUpdated").load(beam_current);
+        $$("chart").load(beam_current);
     };
 
     //create UI
@@ -27,6 +29,11 @@
                     var current = response.value ? response.value.toFixed(3) : NaN;
                     return "Current <b>" + current +"</b>";
                 },
+                height: 30
+            },
+            {
+                id: "operator_msg",
+                template: "Operator: #value#",
                 height: 30
             },
             {
@@ -120,7 +127,7 @@
             },
             yaxis: {
                 ticks: [],
-                min: 0,
+                min: -1,
                 autoscaleMargin: 0.1
             },
             selection: {
