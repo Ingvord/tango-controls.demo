@@ -17,11 +17,10 @@
     webix.ui({
         id: "app",
         container: "app",
-        height: 480,
         rows: [
             {
                 view: "template",
-                type: "header", template: "Tango Controls demo application."
+                type: "header", template: "Welcome to Tango Controls demo web application. This simple application requests current value from ESRF, Grenoble"
             },
             {
                 id: "currentValue",
@@ -44,6 +43,7 @@
                 dynamic: true,
                 cellWidth: 100,
                 animateDuration: 300,
+                height: 300,
                 label: function(response){
                     return response.value.toFixed(3);
                 },
@@ -78,6 +78,33 @@
                     return "Last updated @<b>" + new Date(response.timestamp) + "</b>"
                 },
                 type: "section"
+            },
+            {
+                cols:[
+                    {
+                        rows:[
+                            {
+                                type: "header",
+                                template:"Beam current history:"
+                            },
+                            {
+                                template:'<div id="placeholder" class="demo-container"></div><div id="overview" class="demo-container" style="height: 150px;"></div>'
+                            }
+                        ]
+                    },
+                    {
+                        rows:[
+                            {
+                                type: "header",
+                                template:"Here is the explanation:"
+                            },
+                            {
+                                template:'<object data="images/demo.svg" type="image/svg+xml" width="960px" height="720px"><!--<img src="yourfallback.jpg" />--></object>'
+                            }
+                        ]
+                    }
+
+                ]
             }
         ]
     });
