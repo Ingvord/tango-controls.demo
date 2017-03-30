@@ -32,7 +32,7 @@
             },
             {
                 id: "operator_msg",
-                template: "Operator: #value#",
+                template: "Operator: <b>#value#</b>",
                 height: 30
             },
             {
