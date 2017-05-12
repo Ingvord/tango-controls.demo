@@ -1,6 +1,12 @@
 (function () {
     var beam_current = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
+    var lifetime = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/lifetime/value");
+    var filling_pattern = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/filling_pattern/value");
+    var since_mesg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Since_mesg/value");
+    var sr_mode = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/value");
     var operator_msg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Operator_message/value");
+
+    var sr_mode_labels = [];
 
     webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
         headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
@@ -8,6 +14,11 @@
 
     var mainLoop = function () {
         $$("operator_msg").load(operator_msg);
+        $$("lifetime").load(lifetime);
+        $$("since_mesg").load(since_mesg);
+        $$("filling_pattern").load(filling_pattern);
+        $$("sr_mode").load(sr_mode);
+
         $$("currentValue").load(beam_current);
         $$("lastUpdated").load(beam_current);
         $$("chart").load(beam_current);
@@ -20,20 +31,57 @@
         rows: [
             {
                 view: "template",
-                type: "header", template: "Welcome to Tango Controls demo web application. This simple application requests current value from ESRF, Grenoble"
+                type: "header",
+                template: "Welcome to Tango Controls demo web application. This simple application requests current value from ESRF, Grenoble"
             },
             {
-                id: "currentValue",
-                template: function(response){
-                    var current = response.value ? response.value.toFixed(3) : NaN;
-                    return "Current <b>" + current +"</b>";
-                },
-                height: 30
+                cols: [
+                    {
+                        id: "lifetime",
+                        template: function (response) {
+                            var value = response.value ? response.value : NaN;
+                            return "Lifetime: <b>" + (value/360).toFixed(2) + "</b> Hours";
+                        },
+                        height: 30
+                    },
+                    {
+                        id: "since_mesg",
+                        template: "Since message: <b>#value#</b>",
+                        height: 30
+                    },
+                    {
+                        id: "filling_pattern",
+                        template: "Filling pattern: <b>#value#</b>",
+                        height: 30
+                    },
+                    {
+                        id: "sr_mode",
+                        template: function(response){
+                            debugger;
+                            return "Sr mode: <b>" + sr_mode_labels[response.value] + "</b>";
+                        },
+                        height: 30
+                    }
+                ]
             },
             {
-                id: "operator_msg",
-                template: "Operator: <b>#value#</b>",
-                height: 30
+                cols: [
+                    {
+                        id: "currentValue",
+                        template: function (response) {
+                            var current = response.value ? response.value.toFixed(3) : NaN;
+                            return "Current: <b>" + current + "</b> mA";
+                        },
+                        height: 30
+                    },
+                    {
+                        id: "operator_msg",
+                        template: "Operator message: <b>#value#</b>",
+                        height: 30,
+                        colspan: 3
+                    }
+
+                ]
             },
             {
                 id: "chart",
@@ -44,7 +92,7 @@
                 cellWidth: 100,
                 animateDuration: 300,
                 height: 300,
-                label: function(response){
+                label: function (response) {
                     return response.value.toFixed(3);
                 },
                 xAxis: {
@@ -52,9 +100,7 @@
                         return webix.Date.dateToStr("%H:%i:%s")(new Date(response.timestamp));
                     }
                 },
-                yAxis: {
-
-                },
+                yAxis: {},
                 series: [
                     {
                         value: "#value#",
@@ -80,26 +126,26 @@
                 type: "section"
             },
             {
-                cols:[
+                cols: [
                     {
-                        rows:[
+                        rows: [
                             {
                                 type: "header",
-                                template:"Beam current history:"
+                                template: "Beam current history:"
                             },
                             {
-                                template:'<div id="placeholder" class="demo-container"></div><div id="overview" class="demo-container" style="height: 150px;"></div>'
+                                template: '<div id="placeholder" class="demo-container"></div><div id="overview" class="demo-container" style="height: 150px;"></div>'
                             }
                         ]
                     },
                     {
-                        rows:[
+                        rows: [
                             {
                                 type: "header",
-                                template:"Here is the explanation:"
+                                template: "Here is the explanation:"
                             },
                             {
-                                template:'<img class="demo" src="images/demo_2.png"/><p>The diagram above is quite self explanatory. Basically your computer accesses this application deployed somewhere. In its turn this application connects to Tango REST API deployed at ESRF. This REST API exports some read-ony data from the ESRF\'s Tango infrastructure.</p>'
+                                template: '<img class="demo" src="images/demo_2.png"/><p>The diagram above is quite self explanatory. Basically your computer accesses this application deployed somewhere. In its turn this application connects to Tango REST API deployed at ESRF. This REST API exports some read-ony data from the ESRF\'s Tango infrastructure.</p>'
                             }
                         ]
                     }
@@ -119,15 +165,25 @@
     });
 
 
+    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/properties").then(function(response) {
+        debugger;
+        sr_mode_labels = response.values;
+    });
+
     //set up flot
-    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current_history/value/plain").then(function(response){
+    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current_history/value/plain").then(function (response) {
         var json = response.json();
         var d = [];
-        for(var i = 0; i < json.width; ++i){
-            d.push([json.data[i],json.data[i + json.width]]);
+        for (var i = 0; i < json.width; ++i) {
+            d.push([json.data[i], json.data[i + json.width]]);
         }
 
         var options = {
+            series: {
+                lines: {
+                    fill: true
+                }
+            },
             xaxis: {
                 mode: "time",
                 tickLength: 5
@@ -143,6 +199,7 @@
         var overview = $.plot("#overview", [d], {
             series: {
                 lines: {
+                    fill: true,
                     show: true,
                     lineWidth: 1
                 },
@@ -167,7 +224,7 @@
         $("#placeholder").bind("plotselected", function (event, ranges) {
 
             // do the zooming
-            $.each(plot.getXAxes(), function(_, axis) {
+            $.each(plot.getXAxes(), function (_, axis) {
                 var opts = axis.options;
                 opts.min = ranges.xaxis.from;
                 opts.max = ranges.xaxis.to;
@@ -185,8 +242,6 @@
             plot.setSelection(ranges);
         });
     });
-
-
 
 
     setInterval(mainLoop, 1000);
