@@ -99,7 +99,7 @@
                                 template:"Here is the explanation:"
                             },
                             {
-                                template:'<object data="images/demo.svg" type="image/svg+xml" width="960px" height="720px"><!--<img src="yourfallback.jpg" />--></object>'
+                                template:'<img class="demo" src="images/demo_2.png"/><p>The diagram above is quite self explanatory. Basically your computer accesses this application deployed somewhere. In its turn this application connects to Tango REST API deployed at ESRF. This REST API exports some read-ony data from the ESRF\'s Tango infrastructure.</p>'
                             }
                         ]
                     }
