@@ -8,9 +8,11 @@
 
     var sr_mode_labels = [];
 
+    //setup webix
     webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
         headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
     });
+
 
     var mainLoop = function () {
         $$("operator_msg").load(operator_msg);
@@ -25,7 +27,7 @@
     };
 
     //create UI
-    webix.ui({
+    var main = webix.ui({
         id: "app",
         container: "app",
         rows: [
@@ -36,6 +38,14 @@
             },
             {
                 cols: [
+                    {
+                        id: "currentValue",
+                        template: function (response) {
+                            var current = response.value ? response.value.toFixed(3) : NaN;
+                            return "Current: <b>" + current + "</b> mA";
+                        },
+                        height: 30
+                    },
                     {
                         id: "lifetime",
                         template: function (response) {
@@ -57,7 +67,6 @@
                     {
                         id: "sr_mode",
                         template: function(response){
-                            debugger;
                             return "Sr mode: <b>" + sr_mode_labels[response.value] + "</b>";
                         },
                         height: 30
@@ -67,20 +76,11 @@
             {
                 cols: [
                     {
-                        id: "currentValue",
-                        template: function (response) {
-                            var current = response.value ? response.value.toFixed(3) : NaN;
-                            return "Current: <b>" + current + "</b> mA";
-                        },
-                        height: 30
-                    },
-                    {
                         id: "operator_msg",
                         template: "Operator message: <b>#value#</b>",
                         height: 30,
                         colspan: 3
                     }
-
                 ]
             },
             {
@@ -157,6 +157,8 @@
 
     document.getElementById("loading").remove();
 
+    webix.event(window, "resize", function(){ main.adjust(); });
+
     webix.extend($$("app"), webix.ProgressBar);
     $$("app").showProgress({
         type: "icon",
@@ -167,7 +169,7 @@
 
     webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/properties").then(function(response) {
         debugger;
-        sr_mode_labels = response.values;
+        sr_mode_labels = response.json()[0].values;
     });
 
     //set up flot
