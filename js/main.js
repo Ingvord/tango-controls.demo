@@ -11,6 +11,7 @@
     //setup webix
     webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
         headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
+        headers["Content-Type"] = "application.json";
     });
 
 
