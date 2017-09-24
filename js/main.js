@@ -135,7 +135,7 @@
                                 template: "Beam current history:"
                             },
                             {
-                                template: '<div id="placeholder" class="demo-placeholder"></div><div id="overview" class="demo-container" style="height: 150px;"></div>'
+                                template: '<div id="placeholder" class="demo-container"></div><div id="overview" class="demo-container" style="height: 150px;"></div>'
                             }
                         ]
                     },
