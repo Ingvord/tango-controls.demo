@@ -1,10 +1,10 @@
 (function () {
-    var beam_current = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
-    var lifetime = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/lifetime/value");
-    var filling_pattern = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/filling_pattern/value");
-    var since_mesg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Since_mesg/value");
-    var sr_mode = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/value");
-    var operator_msg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Operator_message/value");
+    var beam_current = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/current/value");
+    var lifetime = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/lifetime/value");
+    var filling_pattern = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/filling_pattern/value");
+    var since_mesg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/Since_mesg/value");
+    var sr_mode = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/value");
+    var operator_msg = webix.proxy("rest", "https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/Operator_message/value");
 
     var sr_mode_labels = [];
 
@@ -168,13 +168,13 @@
     });
 
 
-    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/properties").then(function(response) {
+    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/Sr_mode/properties").then(function(response) {
         debugger;
         sr_mode_labels = response.json()[0].values;
     });
 
     //set up flot
-    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest01.esrf.fr/10000/devices/sys/mcs/facade/attributes/current_history/value/plain").then(function (response) {
+    webix.ajax().get("https://mstatus.esrf.fr/tango/rest/rc4/hosts/tangorest02.esrf.fr/10000/devices/sys/mcs/facade/attributes/current_history/value/plain").then(function (response) {
         var json = response.json();
         var d = [];
         for (var i = 0; i < json.width; ++i) {
